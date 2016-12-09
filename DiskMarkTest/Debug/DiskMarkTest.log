@@ -1,30 +1,25 @@
-﻿  TAB1.cpp
-  DiskMarkTestDlg.cpp
-  DiskMarkTest.cpp
-  Generating Code...
-  Compiling...
-  BenchmarkLogic.cpp
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(30): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(31): warning C4244: 'argument': conversion from 'double' to 'SIZE_T', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(49): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(59): warning C4244: 'argument': conversion from 'double' to 'SIZE_T', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(82): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(83): warning C4244: 'argument': conversion from 'double' to 'SIZE_T', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(101): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(114): warning C4244: 'argument': conversion from 'double' to 'SIZE_T', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(132): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(133): warning C4244: 'argument': conversion from 'double' to 'SIZE_T', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(149): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(159): warning C4244: 'argument': conversion from 'double' to 'SIZE_T', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(176): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(177): warning C4244: 'argument': conversion from 'double' to 'SIZE_T', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(195): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(205): warning C4244: 'argument': conversion from 'double' to 'SIZE_T', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(254): warning C4244: '=': conversion from '__int64' to 'double', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(282): warning C4244: '=': conversion from '__int64' to 'double', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(308): warning C4244: '=': conversion from '__int64' to 'double', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(334): warning C4244: '=': conversion from '__int64' to 'double', possible loss of data
-c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(344): warning C4101: 'thread_id': unreferenced local variable
-  Generating Code...
-  DiskMarkTest.vcxproj -> c:\users\user\documents\visual studio 2015\Projects\DiskMarkTest\Debug\DiskMarkTest.exe
-  DiskMarkTest.vcxproj -> c:\users\user\documents\visual studio 2015\Projects\DiskMarkTest\Debug\DiskMarkTest.pdb (Partial PDB)
+﻿  BenchmarkLogic.cpp
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(31): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(32): warning C4244: 'argument': conversion from 'double' to 'SIZE_T', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(53): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(66): warning C4244: 'argument': conversion from 'double' to 'SIZE_T', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(80): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(81): warning C4244: 'argument': conversion from 'double' to 'SIZE_T', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(102): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(121): warning C4244: 'argument': conversion from 'double' to 'SIZE_T', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(139): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(140): warning C4244: 'argument': conversion from 'double' to 'SIZE_T', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(159): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(172): warning C4244: 'argument': conversion from 'double' to 'SIZE_T', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(189): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(190): warning C4244: 'argument': conversion from 'double' to 'SIZE_T', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(211): warning C4244: 'argument': conversion from 'double' to 'DWORD', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(231): warning C4244: 'argument': conversion from 'double' to 'SIZE_T', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(270): warning C4018: '>': signed/unsigned mismatch
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(297): warning C4244: '=': conversion from '__int64' to 'double', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(322): warning C4244: '=': conversion from '__int64' to 'double', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(347): warning C4244: '=': conversion from '__int64' to 'double', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(371): warning C4244: '=': conversion from '__int64' to 'double', possible loss of data
+c:\users\user\documents\visual studio 2015\projects\diskmarktest\diskmarktest\benchmarklogic.cpp(382): warning C4101: 'thread_id': unreferenced local variable
+  DiskMarkTest.vcxproj -> C:\Users\User\Documents\Visual Studio 2015\Projects\DiskMarkTest\Debug\DiskMarkTest.exe
+  DiskMarkTest.vcxproj -> C:\Users\User\Documents\Visual Studio 2015\Projects\DiskMarkTest\Debug\DiskMarkTest.pdb (Partial PDB)

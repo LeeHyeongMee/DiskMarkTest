@@ -1,7 +1,7 @@
 #pragma once
 #include "afxwin.h"
 #include "BenchmarkLogic.h"
-
+#include "BenchMarkData.h"
 // CTAB1 dialog
 
 class CTAB1 : public CDialog
@@ -26,4 +26,6 @@ public:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedButton2();
 	afx_msg void OnBnClickedButton3();
+	afx_msg void OnBnClickedButton4();
+	afx_msg void OnBnClickedButton5();
 };
