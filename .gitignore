@@ -1,0 +1,6 @@
+*.VC.db
+*.VC
+*.opendb
+*.db
+*.sln
+DiskMarkTest/Debug/*

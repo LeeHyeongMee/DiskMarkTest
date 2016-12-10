@@ -12,31 +12,80 @@
 #include <atlstr.h>
 #include <iostream>
 #include <strsafe.h>
-
+#include <fstream>
+#include <stdlib.h>
+#include <stdio.h>
 using namespace std;
 
+int trialNum;
+CString str;
 static CString testFileDir;
 static CString testFilePath;
 
-int trialNum = 34;
+void ErrorExit(LPTSTR lpszFunction)
+{
+	// Retrieve the system error message for the last-error code
+
+	LPVOID lpMsgBuf;
+	LPVOID lpDisplayBuf;
+	DWORD dw = GetLastError();
+
+	FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM |
+		FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL,
+		dw,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPTSTR)&lpMsgBuf,
+		0, NULL);
+
+	// Display the error message and exit the process
+
+	lpDisplayBuf = (LPVOID)LocalAlloc(LMEM_ZEROINIT,
+		(lstrlen((LPCTSTR)lpMsgBuf) + lstrlen((LPCTSTR)lpszFunction) + 40) * sizeof(TCHAR));
+	StringCchPrintf((LPTSTR)lpDisplayBuf,
+		LocalSize(lpDisplayBuf) / sizeof(TCHAR),
+		TEXT("%s failed with error %d: %s"),
+		lpszFunction, dw, lpMsgBuf);
+	MessageBox(NULL, (LPCTSTR)lpDisplayBuf, TEXT("Error"), MB_OK);
+
+	LocalFree(lpMsgBuf);
+	LocalFree(lpDisplayBuf);
+	ExitProcess(dw);
+}
+
+void init_data(BenchMarkData* data) {
+	SYSTEM_INFO sysinfo;
+
+	GetSystemInfo(&sysinfo);
+	data->pageSize = sysinfo.dwPageSize;
+	data->testSize = 4096;
+	data->bandwidth = 0.0;
+	data->trials = trialNum;
+
+}
+
 
 // ================================  MODULE READ  ===========================================
 
-long long Sequential_read(BenchMarkData* data) {
+//long long Sequential_read(BenchMarkData* data) {
+int Sequential_read(BenchMarkData* data) {
+	init_data(data);
 	int j;
 	BOOL result;
 	DWORD readPtr;
 	LARGE_INTEGER StartTime, EndTime, ElapsedSeconds, Freq;
-	double bufferSize = data->testSize; //data->pageSize * 1024;
+	int bufferSize = 4096;//data->testSize;
+
 	int blockNum = (int)bufferSize / data->pageSize;
+
 	static char* bufferPtr = (char*)VirtualAlloc(NULL, bufferSize, MEM_COMMIT, PAGE_READWRITE);
-	int t = 4;
 
 	// create Test File
 	static HANDLE hFile = CreateFile(testFilePath, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_NO_BUFFERING | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 
 	if (hFile == INVALID_HANDLE_VALUE) {
-		CString str;
 		str.Format(_T("error line 42 , and num of trial is %d"), data->trials); // 
 		AfxMessageBox(str);
 		return -10000;
@@ -53,21 +102,25 @@ long long Sequential_read(BenchMarkData* data) {
 		result = ReadFile(hFile, bufferPtr, data->pageSize, &readPtr, NULL);
 
 		if (!result) {
-			// Handle error
-			//	CString str;
-			//	str.Format(_T("error line 58 , and num of trial is %d and block number is %d"), data->trials, blockNum); // 
-			//	AfxMessageBox(str);
+			ErrorExit(TEXT("Sequential Read"));
 		}
-
 	}
 
 	QueryPerformanceCounter(&EndTime);
 
-	VirtualFree(bufferPtr, bufferSize, MEM_DECOMMIT);
+	//VirtualFree(bufferPtr, bufferSize, MEM_DECOMMIT);
+	str.Format(_T("freq: %ld"), Freq.QuadPart);
+	AfxMessageBox(str);
+	str.Format(_T("%ld"), (EndTime.QuadPart - StartTime.QuadPart));
+	AfxMessageBox(str);
 	ElapsedSeconds.QuadPart = EndTime.QuadPart - StartTime.QuadPart;
-	ElapsedSeconds.QuadPart *= 1000;
+	ElapsedSeconds.QuadPart *= 1000000;
+	ElapsedSeconds.QuadPart /= Freq.QuadPart;
 
-	return ElapsedSeconds.QuadPart;
+	str.Format(_T("elapsed: %ld"), ElapsedSeconds.QuadPart);
+	AfxMessageBox(str);
+
+	return ElapsedSeconds.QuadPart; 
 }
 
 long long Random_read(BenchMarkData* data) {
@@ -84,10 +137,7 @@ long long Random_read(BenchMarkData* data) {
 	static HANDLE hFile = CreateFile(testFilePath, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_NO_BUFFERING | FILE_FLAG_RANDOM_ACCESS, NULL);
 
 	if (hFile == INVALID_HANDLE_VALUE) {
-		// handle error
-		CString str;
-		str.Format(_T("error line 89, and num of trial is %d"), data->trials); // 
-		AfxMessageBox(str);
+		ErrorExit(TEXT("Random Read"));
 	}
 
 	// Generate rand Num with os tick count to acquire high randomness
@@ -102,6 +152,7 @@ long long Random_read(BenchMarkData* data) {
 		result = ReadFile(hFile, bufferPtr, data->pageSize, &readPtr, NULL);
 
 		if (!setPtr_result) {
+			ErrorExit(TEXT("Randoml Read file pointer"));
 			// handle error for settig rand file ptrCString str;
 			//		CString str;
 			//		str.Format(_T("error line 107, and num of trial is %d"), data->trials); // 
@@ -109,6 +160,7 @@ long long Random_read(BenchMarkData* data) {
 		}
 
 		if (!result) {
+			ErrorExit(TEXT("Randoml Read result"));
 			// handle error for read file failure
 			//	CString str;
 			//	str.Format(_T("error line 114 , and num of trial is %d"), data->trials); // 
@@ -118,10 +170,10 @@ long long Random_read(BenchMarkData* data) {
 
 	QueryPerformanceCounter(&EndTime);
 
-	VirtualFree(bufferPtr, bufferSize, MEM_DECOMMIT);
+	//VirtualFree(bufferPtr, bufferSize, MEM_DECOMMIT);
 
 	ElapsedSeconds.QuadPart = EndTime.QuadPart - StartTime.QuadPart;
-	ElapsedSeconds.QuadPart *= 1000;
+	ElapsedSeconds.QuadPart *= 1000000;
 	ElapsedSeconds.QuadPart /= Freq.QuadPart;
 
 	return ElapsedSeconds.QuadPart;
@@ -160,20 +212,17 @@ long long Sequential_write(BenchMarkData* data) {
 		FlushFileBuffers(hFile);
 
 		if (!result) {
-			// Handle errorCString str;
-			CString str;
-			str.Format(_T("line number is 165, number of trial is %d"), data->trials); // 
-			AfxMessageBox(str);
+			ErrorExit(TEXT("Sequential write"));
 		}
 	}
 
 	// End Performance Counter
 	QueryPerformanceCounter(&EndTime);
-	VirtualFree(bufferPtr, bufferSize, MEM_DECOMMIT);
+	//VirtualFree(bufferPtr, bufferSize, MEM_DECOMMIT);
 
 	// Format Performance Counter unit to second ( ns to s )
 	ElapsedSeconds.QuadPart = EndTime.QuadPart - StartTime.QuadPart;
-	ElapsedSeconds.QuadPart *= 1000;
+	ElapsedSeconds.QuadPart *= 1000000;
 	ElapsedSeconds.QuadPart /= Freq.QuadPart;
 
 	return ElapsedSeconds.QuadPart;
@@ -213,26 +262,22 @@ long long Random_write(BenchMarkData* data) {
 
 		if (!setPtr_result) {
 			//handle error for file pointer
-			CString str;
-			str.Format(_T("error line 217 , and num of trial is %d"), data->trials); // 
-			AfxMessageBox(str);
+			ErrorExit(TEXT("random write file pointer set"));
 		}
 
 		if (!result) {
 			// Handle error
-			CString str;
-			str.Format(_T("error line 224 , and num of trial is %d"), data->trials); // 
-			AfxMessageBox(str);
+			ErrorExit(TEXT("random write result"));
 		}
 	}
 
 	// End Performance Counter
 	QueryPerformanceCounter(&EndTime);
-	VirtualFree(bufferPtr, bufferSize, MEM_DECOMMIT);
+	//VirtualFree(bufferPtr, bufferSize, MEM_DECOMMIT);
 
 	// Format Performance Counter unit to second ( ns to s )
 	ElapsedSeconds.QuadPart = EndTime.QuadPart - StartTime.QuadPart;
-	ElapsedSeconds.QuadPart *= 1000;
+	ElapsedSeconds.QuadPart *= 1000000;
 	ElapsedSeconds.QuadPart /= Freq.QuadPart;
 
 	return ElapsedSeconds.QuadPart;
@@ -240,15 +285,6 @@ long long Random_write(BenchMarkData* data) {
 
 // ================================  CONTROLLER  ===========================================
 
-void init_data(BenchMarkData* data) {
-	SYSTEM_INFO sysinfo;
-
-	GetSystemInfo(&sysinfo);
-	data->pageSize = sysinfo.dwPageSize;
-	data->testSize = 4096;
-	data->bandwidth = 0.0;
-	data->trials = trialNum;
-}
 
 void setTestEnv() {
 	testFileDir.Format(_T("C:\\BenchMark_testDir"));
@@ -293,7 +329,7 @@ BenchMarkData* callSequentialRead() {
 			sr += Sequential_read(data);
 		}
 
-		data->bandwidth += (4096 * pow(4, b)) / sr; // unit: B/ms == MB/s
+		data->bandwidth += (4096 * pow(4, b)) / (sr * 1000); // unit: B/ms == KB/(s * 1000) = MB/s
 		data->seqRead[b] = sr / data->trials;
 		sr = 0;
 	}
@@ -377,6 +413,9 @@ BenchMarkData* callRadomWrite() {
 	return data;
 }
 
+
+
+
 BenchMarkData* main_thr(int d, int trials) {
 	trialNum = trials;
 	DWORD thread_id;
@@ -384,7 +423,9 @@ BenchMarkData* main_thr(int d, int trials) {
 	BenchMarkData* tmp = NULL;
 
 	if (d == 1) {
+		//FileCheck();
 		tmp = callSequentialRead();
+		
 	}
 	else if (d == 2)
 	{

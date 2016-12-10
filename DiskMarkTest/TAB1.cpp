@@ -80,8 +80,7 @@ void CTAB1::OnBnClickedButton3()
 	//long long value = main_thr(1);
 	BenchMarkData* tmp = main_thr(1, numOfTrial+5);
 	CString v1_sMessageToDisplay;
-	v1_sMessageToDisplay.Format(_T("time is %d, %d, %d, %d, %d, %d"), 
-		tmp->seqRead[0], tmp->seqRead[1], tmp->seqRead[2], tmp->seqRead[3], tmp->seqRead[4], tmp->seqRead[5]);
+	v1_sMessageToDisplay.Format(_T("time is %d, %d, %d, %d, %d"), tmp->seqRead[0], tmp->seqRead[1], tmp->seqRead[2], tmp->seqRead[3], tmp->seqRead[4]);
 	MessageBox(v1_sMessageToDisplay, 0, MB_ICONINFORMATION);
 }
 
