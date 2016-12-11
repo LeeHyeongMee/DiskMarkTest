@@ -118,11 +118,29 @@ BOOL CDiskMarkTestDlg::OnInitDialog()
 	this->m_pwndShow = &this->m_tab1;
 
 	CTAB1* tab = &this->m_tab1;
+	tab->comboTrialNumber.AddString(_T("1"));
+	tab->comboTrialNumber.AddString(_T("2"));
+	tab->comboTrialNumber.AddString(_T("3"));
+	tab->comboTrialNumber.AddString(_T("4"));
 	tab->comboTrialNumber.AddString(_T("5"));
-	tab->comboTrialNumber.AddString(_T("6"));
-	tab->comboTrialNumber.AddString(_T("7"));
-	tab->comboTrialNumber.AddString(_T("8"));
+
+	tab->comboDirectory.AddString(_T("C"));
+	tab->comboDirectory.AddString(_T("D"));
+	tab->comboDirectory.AddString(_T("E"));
+
+	tab->comboOperation.AddString(_T("READ"));
+	tab->comboOperation.AddString(_T("WRITE"));
+	 
+	tab->comboChunk.AddString(_T("512Byte"));
+	tab->comboChunk.AddString(_T("1KB"));
+	tab->comboChunk.AddString(_T("2KB"));
+	tab->comboChunk.AddString(_T("4KB"));
+	tab->comboChunk.AddString(_T("8KB"));
+	tab->comboChunk.AddString(_T("16KB"));
+	
 	//tab->comboTrialNumber.SetCurSel(0);
+	tab->progressBar.SetRange(0, 10000);
+
 
 
 	return TRUE;  // return TRUE  unless you set the focus to a control

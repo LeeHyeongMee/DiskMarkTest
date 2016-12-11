@@ -27,8 +27,9 @@ int chunkSize;
 static CString testFileDir;
 static CString testFilePath;
 
-BenchMarkData* seq = NULL;
-BenchMarkData* rand = NULL;
+/*BenchMarkData* seqData = NULL;
+BenchMarkData* randData = NULL;*/
+BenchMarkData* ansData = NULL;
 static char* bufferPtr = NULL;
 long long bufferSize = 0;
 int blockNum = 0;
@@ -65,7 +66,7 @@ void ErrorExit(LPTSTR lpszFunction) {
 
 void init(BenchMarkData* data) {
   //!!!!!!!!!!!!need to get chunkSize input !!!!!!!!!!!!!!!
-  data->chunkSize = 0; 
+  data->chunkSize = chunkSize; 
   //!!!!!!!!!!!!need to get chunkSize input !!!!!!!!!!!!!!!
   
   data->drive = diskDrive;
@@ -97,11 +98,11 @@ void checkDiskFreeSpace(BenchMarkData* data) {
 		cstr.Format(_T("No available space for the test. %dB needed. Aborting..."), diskFreeSpace.LowPart);
 		AfxMessageBox(cstr);
 	}
-	else
+	/*else
 	{
 		cstr.Format(_T("DiskSpace has some free space %dB"), diskFreeSpace.LowPart);
 		AfxMessageBox(cstr);
-	}
+	}*/
 }
 
 
@@ -164,7 +165,7 @@ long long Random_read(BenchMarkData* data) {
 	LARGE_INTEGER randBlockPtr;
 
 	bufferSize = VIRTUAL_DISK_SIZE;
-	blockNum = (int) bufferSize / data->chunkSize;
+	blockNum = (int) bufferSize / data->chunkSize; //division by zero error occurs
 	bufferPtr = (char*) VirtualAlloc(NULL, bufferSize, MEM_COMMIT, PAGE_READWRITE);
 
 	// create Test File
@@ -226,7 +227,7 @@ long long Sequential_write(BenchMarkData* data) {
 	LARGE_INTEGER Freq;
 
 	bufferSize = VIRTUAL_DISK_SIZE;
-	blockNum = (int) bufferSize / data->chunckSize;
+	blockNum = (int) bufferSize / data->chunkSize;
 	bufferPtr = (char*) VirtualAlloc(NULL, bufferSize, MEM_COMMIT, PAGE_READWRITE);
 
 	// create Test File
@@ -243,7 +244,7 @@ long long Sequential_write(BenchMarkData* data) {
 
 	for (j = 0; j < blockNum; j++)
 	{
-		result = WriteFile(hFile, bufferPtr, data->, &writePtr, NULL);
+		result = WriteFile(hFile, bufferPtr, bufferSize, &writePtr, NULL);
     // flush buffer to disk
 		FlushFileBuffers(hFile);
 
@@ -279,7 +280,7 @@ long long Random_write(BenchMarkData* data) {
 	LARGE_INTEGER randBlockPtr;
 
 	bufferSize = VIRTUAL_DISK_SIZE ;
-  blockNum = (int) bufferSize / data->chunkSize;
+    blockNum = (int) bufferSize / data->chunkSize;
 	bufferPtr = (char*) VirtualAlloc(NULL, bufferSize, MEM_COMMIT, PAGE_READWRITE);
 
   // create Test File
@@ -416,31 +417,39 @@ BenchMarkData* callRandomWrite() {
 	return data;
 }
 
-void main_thr(int test, char drive, int trials, int selectedChunk) {
+
+BenchMarkData* main_thr(int test, char drive, int trials, int selectedChunk) {
   diskDrive = drive;
 	trialNum = trials;
   chunkSize = selectedChunk;
 
   // set test file directory
 	setTestDir(drive);
-
+	CString cstr;
+	cstr.Format(_T("chunkSize in main_thr is %d"), chunkSize);
+	AfxMessageBox(cstr);
   // implement test
 	if (test == 1) {
-		seq = callSequentialRead();
-    rand = callRandomRead();
+		ansData = callSequentialRead();
+	}
+	else if (test == 2) {
+		ansData = callRandomRead(); 
 	}
 	else if (test == 2)
 	{
-    seq = callSequentialWrite();
-    rand = callRandomWrite();
+		ansData = callSequentialWrite();
+	}
+	else if (test == 4) {
+		ansData = callRandomWrite();
 	}
 
   // 형미 언니, gui에서 seq, rand, bufferPtr 접근해서 data 처리하고 free 시켜주면 될 듯
   // VirtualFree(seq, sizeof(BenchMarkData*), MEM_DECOMMIT);
   // VirtualFree(rand, sizeof(BenchMarkData*), MEM_DECOMMIT);
-  // VirtualFree(bufferPtr, bufferSize, MEM_DECOMMIT);
+  VirtualFree(bufferPtr, bufferSize, MEM_DECOMMIT);
 
-	trialNum = 0;
-  diskDrive = NULL;
-  chunkSize = 0;
+/*	trialNum = 0;
+    diskDrive = NULL;
+    chunkSize = 0;*/
+	return ansData;
 }
