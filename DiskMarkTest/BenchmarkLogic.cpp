@@ -17,10 +17,10 @@
 #include <stdio.h>
 
 #define VIRTUAL_DISK_SIZE 4294967296
-
+//#define VIRTUAL_DISK_SIZE 1000000000
 using namespace std;
 
-CString str;
+CString cstr;
 char diskDrive;
 int trialNum;
 int chunkSize;
@@ -78,31 +78,23 @@ void init(BenchMarkData* data) {
 void setTestDir(char drive) {
 	testFileDir.Format(_T("%c:\\BenchMark_testDir"), drive);
 	CreateDirectory(testFileDir, NULL);
-	testFilePath.Format(_T("%s\\BenchMark_test.tmp"), testFileDir);
+	//testFilePath.Format(_T("%s\\BenchMark_test%08X.tmp"), testFileDir, GetTickCount());
 
-	// testFilePath.Format(_T("%s\\SBenchMark%08X.tmp"), testFileDir, timeGetTime());
+	 testFilePath.Format(_T("%s\\SBenchMark.tmp"), testFileDir);
 }
 
 void checkDiskFreeSpace(BenchMarkData* data) {
-	static CString cstr;
 	TCHAR Root[4];
 	ULARGE_INTEGER freeSpace;
 	ULARGE_INTEGER diskSize;
 	ULARGE_INTEGER diskFreeSpace;
 
-	wsprintf(Root, _T("%c:\\"), data->drive);
-
 	GetDiskFreeSpaceEx(Root, &freeSpace, &diskSize, &diskFreeSpace);
 
 	if (diskFreeSpace.HighPart == 0 && data->testSize > diskFreeSpace.LowPart) {
-		cstr.Format(_T("No available space for the test. %dB needed. Aborting..."), diskFreeSpace.LowPart);
+		cstr.Format(_T("No available space for the test. %ldB needed. Aborting..."), diskFreeSpace.LowPart);
 		AfxMessageBox(cstr);
 	}
-	/*else
-	{
-		cstr.Format(_T("DiskSpace has some free space %dB"), diskFreeSpace.LowPart);
-		AfxMessageBox(cstr);
-	}*/
 }
 
 
@@ -183,7 +175,7 @@ long long Random_read(BenchMarkData* data) {
 
 	for (j = 0; j < blockNum; j++) {
     // evaluate random pointer address
-		randBlockPtr.QuadPart = (long long) rand() % (blockNum + 1);
+		randBlockPtr.QuadPart = (long long) (rand() % blockNum) * data->chunkSize;
 
     // set random pointer to handler file
 		setPtr_result = SetFilePointerEx(hFile, randBlockPtr, NULL, FILE_BEGIN);
@@ -300,7 +292,7 @@ long long Random_write(BenchMarkData* data) {
 	for (j = 0; j < blockNum; j++)
 	{
     // evaluate random pointer address
-		randBlockPtr.QuadPart = (long long)rand() % (blockNum + 1);
+		randBlockPtr.QuadPart = (long long) (rand() % blockNum) * data->chunkSize;
 
     // set random pointer to handler file
 		setPtr_result = SetFilePointerEx(hFile, randBlockPtr, NULL, FILE_BEGIN);
@@ -420,14 +412,12 @@ BenchMarkData* callRandomWrite() {
 
 BenchMarkData* main_thr(int test, char drive, int trials, int selectedChunk) {
   diskDrive = drive;
-	trialNum = trials;
+  trialNum = trials;
   chunkSize = selectedChunk;
 
   // set test file directory
 	setTestDir(drive);
-	CString cstr;
-	cstr.Format(_T("chunkSize in main_thr is %d"), chunkSize);
-	AfxMessageBox(cstr);
+
   // implement test
 	if (test == 1) {
 		ansData = callSequentialRead();
@@ -449,7 +439,7 @@ BenchMarkData* main_thr(int test, char drive, int trials, int selectedChunk) {
   VirtualFree(bufferPtr, bufferSize, MEM_DECOMMIT);
 
 /*	trialNum = 0;
-    diskDrive = NULL;
+    diskDrive = NULL;t
     chunkSize = 0;*/
 	return ansData;
 }
