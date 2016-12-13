@@ -6,7 +6,7 @@
 #include "TAB1.h"
 #include "afxdialogex.h"
 #include "resource.h"
-//#include "BenchMarkData.h"
+
 UINT WorkerThread(LPVOID lParam); //global function
 // CTAB1 dialog
 
@@ -108,15 +108,15 @@ void CTAB1::OnBnClickedButton1()
 	CString temp;
 	this->comboDirectory.GetLBText(this->comboDirectory.GetCurSel(), temp);
 	
-	if (temp.CompareNoCase( _T("C")))
+	if (temp.Compare( _T("C")) == 0)
 	{
 		dir = 'C';
 	}
-	else if (temp.CompareNoCase(_T("D")))
+	else if (temp.Compare(_T("D")) == 0)
 	{
 		dir = 'D';
 	}
-	else if (temp.CompareNoCase(_T("E")))
+	else if (temp.Compare(_T("E")) == 0)
 	{
 		dir = 'E';
 	}
@@ -157,8 +157,9 @@ void CTAB1::OnBnClickedButton1()
 	if (operation == 0)
 	{
 		//read operation
+	/*	seqData = main_thr(1, dir, numOfTrial, chunk);
 		randData = main_thr(2, dir, numOfTrial, chunk);
-		seqData = main_thr(1, dir, numOfTrial, chunk);
+		
 		//random
 		Sum = _T("%d", seqData->seqRead);
 		seqThruResult.SetWindowText(Sum);
@@ -168,12 +169,23 @@ void CTAB1::OnBnClickedButton1()
 		Sum = _T("%d", randData->randRead);
 		RandTotalResult.SetWindowText(Sum);
 		band = _T("%d", randData->bandwidth);
-		RandThruResult.SetWindowText(band);
+		RandThruResult.SetWindowText(band);*/
+		DWORD tm = IterTrial(chunk, dir, numOfTrial);
+		Sum.Format(_T("%d"), tm);
+		seqThruResult.SetWindowTextW(Sum);
+		
+		DWORD tm2 = FileReadSeq(chunk, dir);
+		tm2 = tm2 * 1000000;
+		band.Format(_T("%d"), tm2);
+		SeqThruResult2.SetWindowTextW(band);
+	/*	tm = FileReadRand(512, dir, numOfTrial);
+		band.Format(_T("%d"), tm);
+		RandTotalResult.SetWindowTextW(band);*/
 	}
 	else if (operation == 1)
 	{
 		//write operation
-		randData = main_thr(4, dir, numOfTrial, chunk);
+		/*randData = main_thr(4, dir, numOfTrial, chunk);
 		seqData = main_thr(3, dir, numOfTrial, chunk);
 		Sum = _T("%d", seqData->seqWrite);
 		seqThruResult.SetWindowText(Sum);
@@ -183,7 +195,10 @@ void CTAB1::OnBnClickedButton1()
 		Sum = _T("%d", randData->randWrite);
 		RandTotalResult.SetWindowText(Sum);
 		band = _T("%d", randData->bandwidth);
-		RandThruResult.SetWindowText(band);
+		RandThruResult.SetWindowText(band);*/
+		DWORD tm = FileWriteSeq(512, dir, numOfTrial);
+		Sum.Format(_T("%d"), tm);
+		seqThruResult.SetWindowTextW(Sum);
 	}
 	
 	

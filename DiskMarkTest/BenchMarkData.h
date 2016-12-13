@@ -1,18 +1,18 @@
 #pragma once
 
 
-class BenchMarkData 
+class BenchMarkData
 {
 public:
-  char drive;
+	char drive;
 	int trials;
 	int chunkSize;
 	long long testSize;
 
 	double bandwidth;
 
-	double seqRead;
-	double randRead;
+	long long seqRead;
+	long long randRead;
 
 	double seqWrite;
 	double randWrite;
