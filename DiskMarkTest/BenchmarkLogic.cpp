@@ -16,8 +16,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define VIRTUAL_DISK_SIZE 4294967296
-//#define VIRTUAL_DISK_SIZE 1000000000
+//#define VIRTUAL_DISK_SIZE 4294967296
+#define VIRTUAL_DISK_SIZE 1024*1024
 using namespace std;
 
 CString cstr;
@@ -76,15 +76,11 @@ void init(BenchMarkData* data) {
 }
 
 void setTestDir(char drive) {
-    testFileDir.Format(_T("%c:\\BenchMark_testDir"), drive);
+	testFileDir.Format(_T("%c:\\BenchMark_testDir"), drive);
 	CreateDirectory(testFileDir, NULL);
-	
+
 	testFilePath.Format(_T("%s\\BenchMark_test%08X.tmp"), testFileDir, GetTickCount());
 	// testFilePath.Format(_T("%s\\SBenchMark.tmp"), testFileDir);
-	 
-	CString str;
-	// str.Format(_T("test directory is : %s\\SBenchMark.tmp"), testFileDir); // float형을 CString형으로 바꿔주기 위한 방법. 
-	 AfxMessageBox(testFilePath);
 }
 
 void checkDiskFreeSpace(BenchMarkData* data) {
@@ -110,9 +106,14 @@ long long Sequential_read(BenchMarkData* data) {
 	DWORD readPtr;
 	LARGE_INTEGER StartTime, EndTime, ElapsedSeconds, Freq;
 
+	cstr.Format(_T("Sequential Read start"));
+	AfxMessageBox(cstr);
+
 	bufferSize = VIRTUAL_DISK_SIZE;
 	blockNum = (int) bufferSize / data->chunkSize;
-  bufferPtr = (char*) VirtualAlloc(NULL, bufferSize, MEM_COMMIT, PAGE_READWRITE);
+	bufferPtr = (char*) VirtualAlloc(NULL, bufferSize, MEM_COMMIT, PAGE_READWRITE);
+	// set test file directory
+	setTestDir(data->drive);
 
 	// create Test File in testFilePath
 	static HANDLE hFile = CreateFile(testFilePath, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_NO_BUFFERING | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
@@ -136,13 +137,17 @@ long long Sequential_read(BenchMarkData* data) {
 	}
 
 	QueryPerformanceCounter(&EndTime);
-
+	
 	ElapsedSeconds.QuadPart = EndTime.QuadPart - StartTime.QuadPart;
+	cstr.Format(_T("elapsed time is %ld freq is %ld"), ElapsedSeconds.QuadPart, Freq);
+	AfxMessageBox(cstr);
 	ElapsedSeconds.QuadPart /= Freq.QuadPart;
-
+	cstr.Format(_T("Sequential Read end, elapsed time is %ld %d"), ElapsedSeconds.QuadPart, ElapsedSeconds.QuadPart);
+	AfxMessageBox(cstr);
   // convert second to millisecond
 	ElapsedSeconds.QuadPart *= 1000; 
 
+	CloseHandle(hFile);
   // delete test file created
   result = DeleteFile(testFilePath);
   if ( !result ) {
@@ -150,6 +155,7 @@ long long Sequential_read(BenchMarkData* data) {
     ErrorExit(TEXT("Sequential Read: Delete File failure"));
   }
 
+ 
 	return ElapsedSeconds.QuadPart; 
 }
 
@@ -160,9 +166,14 @@ long long Random_read(BenchMarkData* data) {
 	LARGE_INTEGER StartTime, EndTime, ElapsedSeconds, Freq;
 	LARGE_INTEGER randBlockPtr;
 
+	cstr.Format(_T("Random Read start"));
+	AfxMessageBox(cstr);
+
 	bufferSize = VIRTUAL_DISK_SIZE;
 	blockNum = (int) bufferSize / data->chunkSize; //division by zero error occurs
 	bufferPtr = (char*) VirtualAlloc(NULL, bufferSize, MEM_COMMIT, PAGE_READWRITE);
+	// set test file directory
+	setTestDir(data->drive);
 
 	// create Test File
 	static HANDLE hFile = CreateFile(testFilePath, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_NO_BUFFERING | FILE_FLAG_RANDOM_ACCESS, NULL);
@@ -178,6 +189,9 @@ long long Random_read(BenchMarkData* data) {
 	QueryPerformanceCounter(&StartTime);
 
 	for (j = 0; j < blockNum; j++) {
+		cstr.Format(_T("iterating blockNum "), j);
+		AfxMessageBox(cstr);
+
     // evaluate random pointer address
 		randBlockPtr.QuadPart = (long long) (rand() % blockNum) * data->chunkSize;
 
@@ -203,14 +217,15 @@ long long Random_read(BenchMarkData* data) {
   // convert second to millisecond
 	ElapsedSeconds.QuadPart *= 1000; 
 
-
+	CloseHandle(hFile);
   // delete test file
   result = DeleteFile(testFilePath);
   if ( !result ) {
     //handle error
     ErrorExit(TEXT("Random Read: Delete File failure"));
   }
-
+  cstr.Format(_T("Random Read end"));
+  AfxMessageBox(cstr);
 	return ElapsedSeconds.QuadPart;
 }
 
@@ -258,6 +273,7 @@ long long Sequential_write(BenchMarkData* data) {
   // convert second to millisecond
 	ElapsedSeconds.QuadPart *= 1000; 
 
+	CloseHandle(hFile);
   // delete test file
   result = DeleteFile(testFilePath);
   if ( !result ) {
@@ -324,6 +340,7 @@ long long Random_write(BenchMarkData* data) {
   // convert second to millisecond
 	ElapsedSeconds.QuadPart *= 1000;
 
+	CloseHandle(hFile);
   // delete test file
   result = DeleteFile(testFilePath);
   if ( !result ) {
@@ -347,6 +364,8 @@ BenchMarkData* callSequentialRead() {
 
   for ( i = 0; i < data->trials; i++ ) {
     sr += Sequential_read(data);
+	cstr.Format(_T("sr is %ld"), sr);
+	AfxMessageBox(cstr);
   }
 
   // eval average
@@ -366,6 +385,8 @@ BenchMarkData* callRandomRead() {
 
   for ( i = 0; i < data->trials; i++ ) {
     sr += Random_read(data);
+	cstr.Format(_T("sr is %ld"), sr);
+	AfxMessageBox(cstr);
   }
 
   // eval average
@@ -419,9 +440,6 @@ BenchMarkData* main_thr(int test, char drive, int trials, int selectedChunk) {
   trialNum = trials;
   chunkSize = selectedChunk;
 
-  // set test file directory
-	setTestDir(drive);
-
   // implement test
 	if (test == 1) {
 		ansData = callSequentialRead();
@@ -442,8 +460,8 @@ BenchMarkData* main_thr(int test, char drive, int trials, int selectedChunk) {
   // VirtualFree(rand, sizeof(BenchMarkData*), MEM_DECOMMIT);
   // VirtualFree(bufferPtr, bufferSize, MEM_DECOMMIT);
 
-	trialNum = 0;
-    diskDrive = NULL;
-    chunkSize = 0;
+	//trialNum = 0;
+    //diskDrive = NULL;
+    //chunkSize = 0;
 	return ansData;
 }
