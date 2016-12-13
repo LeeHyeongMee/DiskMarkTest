@@ -97,7 +97,6 @@ void CTAB1::OnBnClickedButton1()
 	GetDlgItem(IDC_BUTTON1)->EnableWindow(0);
 
 
-
 	int numOfTrial = comboTrialNumber.GetCurSel() + 1; //0, 1, 2, 3, 4 to 1, 2, 3, 4, 5
 	int dirSel = comboDirectory.GetCurSel();
 	int chunk = comboChunk.GetCurSel();
@@ -106,18 +105,22 @@ void CTAB1::OnBnClickedButton1()
 	/*CString strl = _T("seqThruText");
 	seqThruResult.SetWindowText(strl);*/
 	char dir;
-	if (dirSel == 0)
+	CString temp;
+	this->comboDirectory.GetLBText(this->comboDirectory.GetCurSel(), temp);
+	
+	if (temp.CompareNoCase( _T("C")))
 	{
 		dir = 'C';
 	}
-	else if (dirSel == 1)
+	else if (temp.CompareNoCase(_T("D")))
 	{
 		dir = 'D';
 	}
-	else if (dirSel == 2)
+	else if (temp.CompareNoCase(_T("E")))
 	{
 		dir = 'E';
 	}
+
 	//identify the chunk size
 	if (chunk == 0)
 	{
@@ -184,8 +187,10 @@ void CTAB1::OnBnClickedButton1()
 	}
 	
 	
-	VirtualFree(seqData, sizeof(BenchMarkData*), MEM_DECOMMIT);
-	VirtualFree(randData, sizeof(BenchMarkData*), MEM_DECOMMIT);
+//	VirtualFree(seqData, sizeof(BenchMarkData*), MEM_DECOMMIT);
+//	VirtualFree(randData, sizeof(BenchMarkData*), MEM_DECOMMIT);
+//	
+	GetDlgItem(IDC_BUTTON1)->EnableWindow(1);
 	
 }
 

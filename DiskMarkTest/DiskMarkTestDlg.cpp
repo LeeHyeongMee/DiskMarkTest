@@ -124,9 +124,45 @@ BOOL CDiskMarkTestDlg::OnInitDialog()
 	tab->comboTrialNumber.AddString(_T("4"));
 	tab->comboTrialNumber.AddString(_T("5"));
 
-	tab->comboDirectory.AddString(_T("C"));
-	tab->comboDirectory.AddString(_T("D"));
-	tab->comboDirectory.AddString(_T("E"));
+	DWORD dwDriveList = ::GetLogicalDrives();
+	int directoryIdx = 0; //C, D, E from 0 to 2
+	int dirList[5];
+
+	while (dwDriveList)
+	{
+		// DWORD형으로 넘어온 값 하나씩 '&' 연산으로 드라이브 존재 유무 판단
+		if (dwDriveList & 1)
+		{
+			// "C:\"과 같이 드라이브를 표시하는 문자열로 만듦
+			// ‘A' 값 기준으로 아스키코드 값 이용
+			dirList[directoryIdx] = 1;
+			//	m_strDrive.SetAt(0, 'A' + m_nDrivePos);
+		}
+		// 우로 1비트 이동(= 다음 드라이브 체크)
+		else
+		{
+			dirList[directoryIdx] = -1;
+		}
+		directoryIdx++;
+		dwDriveList >>= 1;
+		//	m_nDrivePos++;
+	} 
+	
+	if (dirList[2] == 1)
+	{
+		tab->comboDirectory.AddString(_T("C"));
+	}
+	
+	if (dirList[3] == 1)
+	{
+		tab->comboDirectory.AddString(_T("D"));
+	}
+	
+	if (dirList[4] == 1)
+	{
+		tab->comboDirectory.AddString(_T("E"));
+	}
+	
 
 	tab->comboOperation.AddString(_T("READ"));
 	tab->comboOperation.AddString(_T("WRITE"));

@@ -76,11 +76,15 @@ void init(BenchMarkData* data) {
 }
 
 void setTestDir(char drive) {
-	testFileDir.Format(_T("%c:\\BenchMark_testDir"), drive);
+    testFileDir.Format(_T("%c:\\BenchMark_testDir"), drive);
 	CreateDirectory(testFileDir, NULL);
-	//testFilePath.Format(_T("%s\\BenchMark_test%08X.tmp"), testFileDir, GetTickCount());
-
-	 testFilePath.Format(_T("%s\\SBenchMark.tmp"), testFileDir);
+	
+	testFilePath.Format(_T("%s\\BenchMark_test%08X.tmp"), testFileDir, GetTickCount());
+	// testFilePath.Format(_T("%s\\SBenchMark.tmp"), testFileDir);
+	 
+	CString str;
+	// str.Format(_T("test directory is : %s\\SBenchMark.tmp"), testFileDir); // float형을 CString형으로 바꿔주기 위한 방법. 
+	 AfxMessageBox(testFilePath);
 }
 
 void checkDiskFreeSpace(BenchMarkData* data) {
@@ -436,10 +440,10 @@ BenchMarkData* main_thr(int test, char drive, int trials, int selectedChunk) {
   // 형미 언니, gui에서 seq, rand, bufferPtr 접근해서 data 처리하고 free 시켜주면 될 듯
   // VirtualFree(seq, sizeof(BenchMarkData*), MEM_DECOMMIT);
   // VirtualFree(rand, sizeof(BenchMarkData*), MEM_DECOMMIT);
-  VirtualFree(bufferPtr, bufferSize, MEM_DECOMMIT);
+  // VirtualFree(bufferPtr, bufferSize, MEM_DECOMMIT);
 
-/*	trialNum = 0;
-    diskDrive = NULL;t
-    chunkSize = 0;*/
+	trialNum = 0;
+    diskDrive = NULL;
+    chunkSize = 0;
 	return ansData;
 }
